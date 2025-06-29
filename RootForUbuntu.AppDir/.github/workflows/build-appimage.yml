@@ -1,0 +1,29 @@
+name: Build RootForUbuntu AppImage
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install AppImage tool
+        run: |
+          sudo apt update
+          sudo apt install -y wget fuse libfuse2
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+      - name: Build AppImage
+        run: |
+          ./appimagetool-x86_64.AppImage RootForUbuntu.AppDir
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: RootForUbuntu.AppImage
+          path: RootForUbuntu.AppImage
