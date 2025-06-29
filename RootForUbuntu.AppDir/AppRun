@@ -1,0 +1,33 @@
+#!/bin/bash
+echo "[*] Running RootForUbuntu setup..."
+
+set -e
+
+echo "[*] Installing XFCE and Wine..."
+sudo apt update
+sudo apt install xfce4 xfce4-goodies wine32 wget unzip -y
+
+echo "[*] Downloading Windows 11 XFCE theme..."
+wget -O ~/win11-theme.zip https://github.com/B00merang-Project/Windows-11/archive/refs/heads/master.zip
+unzip -o ~/win11-theme.zip -d /usr/share/themes/
+
+echo "[*] Applying theme..."
+mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml
+cat <<EOF > ~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xsettings" version="1.0">
+  <property name="Net/ThemeName" type="string" value="Windows-11-master"/>
+</channel>
+EOF
+
+echo "[*] Running explorer.exe using Wine..."
+wine ~/explorer.exe || echo "[!] explorer.exe failed (Wine or GUI issue)"
+
+if grep -q "Windows-11" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml; then
+    echo "RootForUbuntu completed. Rebooting..."
+    reboot || echo "Manual reboot required."
+    exit 0
+else
+    echo "root failed"
+    exit 1
+fi
