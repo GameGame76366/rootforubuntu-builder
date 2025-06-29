@@ -6,7 +6,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -22,7 +24,7 @@ jobs:
         run: |
           ./appimagetool-x86_64.AppImage RootForUbuntu.AppDir
 
-      - name: Upload Artifacts
+      - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
           name: RootForUbuntu.AppImage
